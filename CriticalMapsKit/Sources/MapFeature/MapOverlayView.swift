@@ -91,59 +91,12 @@ public struct MapOverlayView<Content>: View where Content: View {
 struct MapOverlayView_Previews: PreviewProvider {
   static var previews: some View {
     Group {
-      MapOverlayView(
-        store: Store<MapFeature.State, Never>(
-          initialState: .init(riders: [], userTrackingMode: .init(userTrackingMode: .follow)),
-          reducer: .empty,
-          environment: ()
-        )
-        .actionless
-        .scope(state: { _ in
-          MapOverlayView.ViewState(isVisible: true, isExpanded: true)
-        }
-        ),
+      MapOverlayView<Text>(
+        store: Store(
+          initialState: .init(isVisible: false, isExpanded: false)
+        ) { EmptyReducer() },
         action: {},
-        content: {
-          VStack {
-            Text("Next Ride")
-            Text("FRIDAY")
-          }
-        }
-      )
-      
-      MapOverlayView(
-        store: Store<MapFeature.State, Never>(
-          initialState: .init(riders: [], userTrackingMode: .init(userTrackingMode: .follow)),
-          reducer: .empty,
-          environment: ()
-        )
-        .actionless
-        .scope(state: { _ in
-          MapOverlayView.ViewState(isVisible: true, isExpanded: true)
-        }
-        ),
-        action: {},
-        content: {
-          VStack {
-            Text("Next Ride")
-            Text("FRIDAY")
-          }
-        }
-      )
-      
-      MapOverlayView(
-        store: Store<MapFeature.State, Never>(
-          initialState: .init(riders: [], userTrackingMode: .init(userTrackingMode: .follow)),
-          reducer: .empty,
-          environment: ()
-        )
-        .actionless
-        .scope(state: { _ in
-          MapOverlayView.ViewState(isVisible: true, isExpanded: false)
-        }
-        ),
-        action: {},
-        content: {}
+        content: { Text("MapOerlay") }
       )
     }
   }

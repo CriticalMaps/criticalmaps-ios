@@ -14,13 +14,13 @@ public struct AppearanceSettingsView: View {
 
   public init(store: Store<State, Action>) {
     self.store = store
-    viewStore = ViewStore(store)
+    viewStore = ViewStore(store, observe: { $0 })
   }
 
   public var body: some View {
     SettingsForm {
       SettingsSection(title: "Theme") {
-        Picker("", selection: viewStore.binding(\.$colorScheme)) {
+        Picker("", selection: viewStore.binding(get: \.colorScheme, send: { .set(\.$colorScheme, $0) })) {
           ForEach(AppearanceSettings.ColorScheme.allCases, id: \.self) {
             Text($0.title)
           }
@@ -30,7 +30,7 @@ public struct AppearanceSettingsView: View {
         .padding(.horizontal, .grid(4))
 
         SettingsSection(title: L10n.Settings.appIcon) {
-          AppIconPicker(appIcon: viewStore.binding(\.$appIcon))
+          AppIconPicker(appIcon: viewStore.binding(get: \.appIcon, send: { .set(\.$appIcon, $0) }))
         }
       }
     }

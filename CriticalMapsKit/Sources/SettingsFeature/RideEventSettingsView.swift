@@ -15,7 +15,7 @@ public struct RideEventSettingsView: View {
 
   public init(store: Store<State, Action>) {
     self.store = store
-    viewStore = ViewStore(store)
+    viewStore = ViewStore(store, observe: { $0 })
   }
 
   public var body: some View {
@@ -91,9 +91,8 @@ public struct RideEventSettingsView: View {
       NavigationView {
         RideEventSettingsView(
           store: .init(
-            initialState: .init(settings: .init()),
-            reducer: RideEventsSettingsFeature()._printChanges()
-          )
+            initialState: .init(settings: .init())
+          ) { RideEventsSettingsFeature()._printChanges() }
         )
       }
     }

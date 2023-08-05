@@ -1,4 +1,4 @@
-// swift-tools-version:5.7
+// swift-tools-version:5.8
 
 import PackageDescription
 
@@ -6,7 +6,7 @@ let package = Package(
   name: "CriticalMapsKit",
   defaultLocalization: "en",
   platforms: [
-    .iOS(.v15)
+    .iOS(.v16)
   ],
   products: [
     .library(name: "ApiClient", targets: ["ApiClient"]),
@@ -20,17 +20,14 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/MarcoEidinger/SwiftFormatPlugin", from: "0.49.18"),
-    .package(
-      url: "https://github.com/pointfreeco/swift-composable-architecture",
-      .upToNextMajor(from: "0.40.0")
-    ),
+    .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.0.0"),
     .package(url: "https://github.com/apple/swift-log.git", from: "1.2.0"),
-    .package(url: "https://github.com/pointfreeco/composable-core-location.git", from: "0.1.0"),
+    .package(url: "https://github.com/mltbnz/composable-core-location.git", branch: "main"),
     .package(
       url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
       .upToNextMajor(from: "1.8.2")
     ),
-    .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "0.1.0"),
+    .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.0.0"),
     .package(url: "https://github.com/vtourraine/AcknowList.git", .upToNextMajor(from: "2.1.0")),
     .package(url: "https://github.com/lucaszischka/BottomSheet.git", from: "3.1.0"),
     .package(url: "https://github.com/mltbnz/MastodonKit.git", branch: "master")

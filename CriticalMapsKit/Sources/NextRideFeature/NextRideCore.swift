@@ -8,7 +8,7 @@ import SharedModels
 
 // MARK: State
 
-public struct NextRideFeature: ReducerProtocol {
+public struct NextRideFeature: Reducer {
   public init() {}
   
   @Dependency(\.nextRideService) public var service
@@ -40,7 +40,7 @@ public struct NextRideFeature: ReducerProtocol {
   // MARK: Reducer
 
   /// Reducer handling next ride feature actions
-  public func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+  public func reduce(into state: inout State, action: Action) -> Effect<Action> {
     switch action {
     case let .getNextRide(coordinate):
       guard state.rideEventSettings.isEnabled else {
@@ -55,15 +55,17 @@ public struct NextRideFeature: ReducerProtocol {
 
       let requestRidesInMonth: Int = queryMonth(for: date.callAsFunction)
 
-      return .task { [distance = state.rideEventSettings.eventDistance] in
-        await .nextRideResponse(
-          TaskResult {
-            try await service.nextRide(
-              obfuscatedCoordinate,
-              distance.rawValue,
-              requestRidesInMonth
-            )
-          }
+      return .run { [distance = state.rideEventSettings.eventDistance] send in
+        await send(
+          .nextRideResponse(
+            TaskResult {
+              try await service.nextRide(
+                obfuscatedCoordinate,
+                distance.rawValue,
+                requestRidesInMonth
+              )
+            }
+          )
         )
       }
 
@@ -114,7 +116,7 @@ public struct NextRideFeature: ReducerProtocol {
         return .none
       }
 
-      return EffectTask(value: .setNextRide(filteredRide))
+      return .send(.setNextRide(filteredRide))
 
     case let .setNextRide(ride):
       state.nextRide = ride

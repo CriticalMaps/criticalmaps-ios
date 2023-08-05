@@ -4,7 +4,7 @@ import L10n
 import SharedModels
 import SwiftUI
 
-public struct RideEventRadius: ReducerProtocol {
+public struct RideEventRadius: Reducer {
   public init() {}
   
   public struct State: Equatable, Identifiable, Sendable, Codable {
@@ -23,7 +23,7 @@ public struct RideEventRadius: ReducerProtocol {
     case binding(BindingAction<State>)
   }
   
-  public var body: some ReducerProtocol<State, Action> {
+  public var body: some Reducer<State, Action> {
     BindingReducer()
   }
 }

@@ -4,7 +4,7 @@ import Foundation
 import SharedDependencies
 import SharedModels
 
-public struct AppDelegate: ReducerProtocol {
+public struct AppDelegate: Reducer {
   public init() {}
 
   @Dependency(\.fileClient) public var fileClient
@@ -17,21 +17,23 @@ public struct AppDelegate: ReducerProtocol {
     case userSettingsLoaded(TaskResult<State>)
   }
 
-  public func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+  public func reduce(into state: inout State, action: Action) -> Effect<Action> {
     switch action {
     case .didFinishLaunching:
-      return .task {
-        await .userSettingsLoaded(
-          TaskResult {
-            try await fileClient.loadUserSettings()
-          }
+      return .run { send in
+        await send(
+          .userSettingsLoaded(
+            TaskResult {
+              try await fileClient.loadUserSettings()
+            }
+          )
         )
       }
 
     case let .userSettingsLoaded(result):
       state = (try? result.value) ?? state
       let style = state.appearanceSettings.colorScheme.userInterfaceStyle
-      return .fireAndForget {
+      return .run { _ in
         await setUserInterfaceStyle(style)
       }
     }

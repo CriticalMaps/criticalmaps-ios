@@ -5,7 +5,7 @@ import SharedModels
 import UIApplicationClient
 import UIKit.UIInterface
 
-public struct SettingsFeature: ReducerProtocol {
+public struct SettingsFeature: Reducer {
   public init() {}
 
   // MARK: State
@@ -55,7 +55,7 @@ public struct SettingsFeature: ReducerProtocol {
 
   // MARK: Reducer
 
-  public var body: some ReducerProtocol<State, Action> {
+  public var body: some ReducerOf<Self> {
     BindingReducer()
     
     Scope(
@@ -70,8 +70,15 @@ public struct SettingsFeature: ReducerProtocol {
       action: /SettingsFeature.Action.rideevent) {
         RideEventsSettingsFeature()
     }
+    
+    Reduce { _, action in
+      switch action {
+      default:
+        return .none
+      }
+    }
 
-    Reduce<State, Action> { state, action in
+    Reduce { state, action in
       switch action {
       case .onAppear:
         state.appearanceSettings.appIcon = uiApplicationClient.alternateIconName()
@@ -79,20 +86,20 @@ public struct SettingsFeature: ReducerProtocol {
         return .none
 
       case let .infoSectionRowTapped(row):
-        return EffectTask(value: .openURL(row.url))
+        return .send(.openURL(row.url))
 
       case let .supportSectionRowTapped(row):
-        return EffectTask(value: .openURL(row.url))
+        return .send(.openURL(row.url))
 
       case let .openURL(url):
-        return .fireAndForget {
+        return .run { _ in
           _ = await uiApplicationClient.open(url, [:])
         }
 
       case .appearance, .rideevent, .binding(\.$isObservationModeEnabled), .binding(\.$infoViewEnabled):
         enum SaveDebounceId { case debounce }
         
-        return .fireAndForget { [settings = state] in
+        return .run { [settings = state] _ in
           try await withTaskCancellation(id: SaveDebounceId.debounce, cancelInFlight: true) {
             try await mainQueue.sleep(for: .seconds(1))
             try await fileClient.saveUserSettings(

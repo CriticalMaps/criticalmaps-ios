@@ -2,7 +2,7 @@ import ComposableArchitecture
 import L10n
 import MapKit
 
-public struct UserTrackingFeature: ReducerProtocol {
+public struct UserTrackingFeature: Reducer {
   public init() {}
 
   public struct State: Equatable {
@@ -18,7 +18,7 @@ public struct UserTrackingFeature: ReducerProtocol {
   }
 
   /// Reducer handling tracking mode button state changes
-  public func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+  public func reduce(into state: inout State, action: Action) -> Effect<Action> {
     switch action {
     case .nextTrackingMode:
       switch state.mode {

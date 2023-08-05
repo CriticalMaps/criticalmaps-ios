@@ -14,7 +14,7 @@ public struct UserTrackingButton: View {
 
   public init(store: Store<State, Action>) {
     self.store = store
-    viewStore = ViewStore(store)
+    viewStore = ViewStore(store, observe: { $0 })
   }
 
   public var body: some View {
@@ -61,22 +61,21 @@ struct UserTrackingButton_Previews: PreviewProvider {
     Preview {
       Group {
         UserTrackingButton(
-          store: .init(
-            initialState: .init(userTrackingMode: .none),
-            reducer: UserTrackingFeature()._printChanges()
-          )
+          store: .init(initialState: .init(userTrackingMode: .none)) {
+            UserTrackingFeature()._printChanges()
+          }
         )
+        
         UserTrackingButton(
-          store: .init(
-            initialState: .init(userTrackingMode: .follow),
-            reducer: UserTrackingFeature()._printChanges()
-          )
+          store: .init(initialState: .init(userTrackingMode: .follow)) {
+            UserTrackingFeature()._printChanges()
+          }
         )
+        
         UserTrackingButton(
-          store: .init(
-            initialState: .init(userTrackingMode: .followWithHeading),
-            reducer: UserTrackingFeature()._printChanges()
-          )
+          store: .init(initialState: .init(userTrackingMode: .followWithHeading)) {
+            UserTrackingFeature()._printChanges()
+          }
         )
       }
     }

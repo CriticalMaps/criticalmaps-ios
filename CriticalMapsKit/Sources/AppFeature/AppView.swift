@@ -91,7 +91,10 @@ public struct AppView: View {
       .frame(maxWidth: .infinity, alignment: .center)
     }
     .bottomSheet(
-      bottomSheetPosition: viewStore.binding(\.$bottomSheetPosition),
+      bottomSheetPosition: viewStore.binding(
+        get: \.bottomSheetPosition,
+        send: { .binding(.set(\.$bottomSheetPosition, $0)) }
+      ),
       switchablePositions: [
         .relative(0.4),
         .relativeTop(0.975)
@@ -104,7 +107,7 @@ public struct AppView: View {
     .showDragIndicator(true)
     .enableSwipeToDismiss()
     .onDismiss { viewStore.send(.set(\.$bottomSheetPosition, .hidden)) }
-    .alert(store.scope(state: \.alert, action: { $0 }), dismiss: .dismissAlert)
+//    .alert(store.scope(state: \.alert, action: { $0 }), dismiss: .dismissAlert)
     .onAppear { viewStore.send(.onAppear) }
     .onDisappear { viewStore.send(.onDisappear) }
   }
@@ -256,7 +259,7 @@ public struct AppView: View {
           )
         },
         action: { $0 }
-      ).actionless,
+      ),
       action: { viewStore.send(.map(.focusNextRide(viewStore.nextRideState.nextRide?.coordinate))) },
       content: {
         VStack(alignment: .leading, spacing: .grid(1)) {
@@ -282,10 +285,7 @@ public struct AppView: View {
 struct AppView_Previews: PreviewProvider {
   static var previews: some View {
     AppView(
-      store: Store<AppFeature.State, AppFeature.Action>(
-        initialState: .init(),
-        reducer: AppFeature()._printChanges()
-      )
+      store: Store(initialState: .init()) { AppFeature() }
     )
   }
 }

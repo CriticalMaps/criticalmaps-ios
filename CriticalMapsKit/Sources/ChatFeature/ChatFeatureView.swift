@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import Helpers
 import L10n
 import SharedModels
 import Styleguide
@@ -54,7 +55,7 @@ public struct ChatView: View {
       
       chatInput
     }
-    .alert(store.scope(state: \.alert, action: { $0 }), dismiss: .dismissAlert)
+//    .alert(store: self.store.scope(state: \.alert, action: { _ in .dismissAlert }))
     .onAppear { viewStore.send(.onAppear) }
     .navigationBarTitleDisplayMode(.inline)
     .ignoresSafeArea(.container, edges: .bottom)
@@ -97,21 +98,9 @@ public struct ChatView: View {
 struct ChatView_Previews: PreviewProvider {
   static var previews: some View {
     ChatView(
-      store: Store<ChatFeature.State, ChatFeature.Action>(
-        initialState: .init(
-          chatMessages: .results(
-            [
-              .init(
-                identifier: UUID().uuidString,
-                device: "DEVICE",
-                message: "Hello World",
-                timestamp: 123421231
-              )
-            ]
-          )
-        ),
-        reducer: ChatFeature()._printChanges()
-      )
+      store: Store(initialState: .init()) {
+        ChatFeature()
+      }
     )
   }
 }

@@ -2,7 +2,7 @@ import ComposableArchitecture
 import Foundation
 import UIKit
 
-public struct ChatInput: ReducerProtocol {
+public struct ChatInput: Reducer {
   public init() {}
 
   // MARK: State
@@ -46,7 +46,7 @@ public struct ChatInput: ReducerProtocol {
 
   // MARK: Reducer
 
-  public var body: some ReducerProtocol<State, Action> {
+  public var body: some Reducer<State, Action> {
     BindingReducer()
     Reduce { state, action in
       switch action {

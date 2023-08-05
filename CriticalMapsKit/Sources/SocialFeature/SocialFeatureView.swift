@@ -77,13 +77,14 @@ public struct SocialView: View {
 struct SocialView_Previews: PreviewProvider {
   static var previews: some View {
     SocialView(
-      store: StoreOf<SocialFeature>(
+      store: Store(
         initialState: SocialFeature.State(
           chatFeatureState: .init(),
           mastodonFeedState: .init()
-        ),
-        reducer: SocialFeature()._printChanges()
-      )
+        )
+      ) {
+        SocialFeature()._printChanges()
+      }
     )
   }
 }

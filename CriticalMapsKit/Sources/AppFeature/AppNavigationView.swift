@@ -192,10 +192,7 @@ public struct AppNavigationView: View {
 struct AppNavigationView_Previews: PreviewProvider {
   static var previews: some View {
     AppNavigationView(
-      store: Store<AppFeature.State, AppFeature.Action>(
-        initialState: .init(),
-        reducer: AppFeature()._printChanges()
-      )
+      store: Store(initialState: .init()) { AppFeature()._printChanges() }
     )
   }
 }

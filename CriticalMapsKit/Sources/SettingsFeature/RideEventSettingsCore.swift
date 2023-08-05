@@ -3,7 +3,7 @@ import Foundation
 import Helpers
 import SharedModels
 
-public struct RideEventsSettingsFeature: ReducerProtocol {
+public struct RideEventsSettingsFeature: Reducer {
   public init() {}
   
   public struct State: Equatable, Sendable {
@@ -29,7 +29,7 @@ public struct RideEventsSettingsFeature: ReducerProtocol {
     case rideEventType(id: RideEventType.State.ID, action: RideEventType.Action)
   }
 
-  public var body: some ReducerProtocol<State, Action> {
+  public var body: some Reducer<State, Action> {
     BindingReducer()
     
     Reduce { _, action in

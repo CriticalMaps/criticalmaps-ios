@@ -21,12 +21,24 @@ public struct MapFeatureView: View {
     ZStack(alignment: .topLeading) {
       MapView(
         riderCoordinates: viewStore.riderLocations,
-        userTrackingMode: viewStore.binding(\.$userTrackingMode),
+        userTrackingMode: viewStore.binding(
+          get: \.userTrackingMode,
+          send: { .binding(.set(\.$userTrackingMode, $0)) }
+        ),
         nextRide: viewStore.nextRide,
         rideEvents: viewStore.rideEvents,
-        annotationsCount: viewStore.binding(\.$visibleRidersCount),
-        centerRegion: viewStore.binding(\.$centerRegion),
-        centerEventRegion: viewStore.binding(\.$eventCenter),
+        annotationsCount: viewStore.binding(
+          get: \.visibleRidersCount,
+          send: { .binding(.set(\.$visibleRidersCount, $0)) }
+        ),
+        centerRegion: viewStore.binding(
+          get: \.centerRegion,
+          send: { .binding(.set(\.$centerRegion, $0)) }
+        ),
+        centerEventRegion: viewStore.binding(
+          get: \.eventCenter,
+          send: { .binding(.set(\.$eventCenter, $0)) }
+        ),
         mapMenuShareEventHandler: {
           viewStore.send(.showShareSheet(true))
         },
@@ -37,7 +49,10 @@ public struct MapFeatureView: View {
       .edgesIgnoringSafeArea(.all)
     }
     .sheet(
-      isPresented: viewStore.binding(\.$presentShareSheet),
+      isPresented: viewStore.binding(
+        get: \.presentShareSheet,
+        send: { .binding(.set(\.$presentShareSheet, $0)) }
+      ),
       onDismiss: { viewStore.send(.showShareSheet(false)) },
       content: {
         ShareSheetView(activityItems: [viewStore.nextRide?.shareMessage ?? ""])
@@ -54,13 +69,12 @@ struct MapFeatureView_Previews: PreviewProvider {
   static var previews: some View {
     Preview {
       MapFeatureView(
-        store: Store<MapFeature.State, MapFeature.Action>(
+        store: Store(
           initialState: MapFeature.State(
             riders: [],
             userTrackingMode: UserTrackingFeature.State(userTrackingMode: .follow)
-          ),
-          reducer: MapFeature()._printChanges()
-        )
+          )
+        ) { MapFeature()._printChanges() }
       )
     }
   }

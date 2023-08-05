@@ -5,7 +5,7 @@ import SharedModels
 import UIApplicationClient
 import UIKit.UIInterface
 
-public struct AppearanceSettingsFeature: ReducerProtocol {
+public struct AppearanceSettingsFeature: Reducer {
   public init() {}
 
   @Dependency(\.uiApplicationClient) public var uiApplicationClient
@@ -21,20 +21,20 @@ public struct AppearanceSettingsFeature: ReducerProtocol {
     case binding(BindingAction<AppearanceSettings>)
   }
   
-  public var body: some ReducerProtocol<State, Action> {
+  public var body: some Reducer<State, Action> {
     BindingReducer()
     
     Reduce<State, Action> { state, action in
       switch action {
       case .binding(\.$colorScheme):
         let style = state.colorScheme.userInterfaceStyle
-        return .fireAndForget {
+        return .run { _ in
           await setUserInterfaceStyle(style)
         }
 
       case .binding(\.$appIcon):
         let appIcon = state.appIcon.rawValue
-        return .fireAndForget {
+        return .run { _ in
           try await uiApplicationClient.setAlternateIconName(appIcon)
         }
 

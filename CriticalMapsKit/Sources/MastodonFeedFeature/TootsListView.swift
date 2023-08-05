@@ -82,15 +82,18 @@ public struct TootsListView: View {
 struct TootsListView_Previews: PreviewProvider {
   static var previews: some View {
     Group {
-      TootsListView(
-        store: StoreOf<TootFeedFeature>(
-          initialState: .init(toots: IdentifiedArray(uniqueElements: [Status].placeHolder)),
-          reducer: TootFeedFeature()._printChanges()
-        )
-      )
+//      TootsListView(
+//        store: Store(
+//          initialState: TootFeedFeature.State(
+//            toots: IdentifiedArray(uniqueElements: [Status].placeHolder)
+//          )
+//        ) {
+//          TootFeedFeature()
+//        }
+//      )
 
-      TootsListView(store: .placeholder)
-        .redacted(reason: .placeholder)
+//      TootsListView(store: .placeholder)
+//        .redacted(reason: .placeholder)
     }
   }
 }

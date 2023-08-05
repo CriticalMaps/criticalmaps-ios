@@ -10,7 +10,7 @@ import Styleguide
 import SwiftUI
 import UIApplicationClient
 
-public struct TootFeedFeature: ReducerProtocol {
+public struct TootFeedFeature: Reducer {
   public init() {}
   
   @Dependency(\.mainQueue) public var mainQueue
@@ -44,20 +44,20 @@ public struct TootFeedFeature: ReducerProtocol {
   
   
   // MARK: Reducer
-  public var body: some ReducerProtocol<State, Action> {
+  public var body: some Reducer<State, Action> {
     Reduce { state, action in
       switch action {
       case .onAppear:
-        return EffectTask(value: .fetchData)
+        return .send(.fetchData)
         
       case .refresh:
         state.isRefreshing = true
-        return EffectTask(value: .fetchData)
+        return .send(.fetchData)
         
       case .fetchData:
         state.isLoading = true
-        return .task {
-          await .fetchDataResponse(TaskResult { try await tootService.getToots() })
+        return .run { send in
+          await send(.fetchDataResponse(TaskResult { try await tootService.getToots() }))
         }
         
       case let .fetchDataResponse(.success(toots)):

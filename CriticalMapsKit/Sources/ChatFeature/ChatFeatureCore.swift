@@ -10,7 +10,7 @@ import SharedDependencies
 import SharedModels
 import UserDefaultsClient
 
-public struct ChatFeature: ReducerProtocol {
+public struct ChatFeature: Reducer {
   public init() {}
   
   @Dependency(\.date) public var date
@@ -57,7 +57,7 @@ public struct ChatFeature: ReducerProtocol {
   
   // MARK: Reducer
   
-  public var body: some ReducerProtocol<State, Action> {
+  public var body: some ReducerOf<Self> {
     Scope(state: \.chatInputState, action: /ChatFeature.Action.chatInput) {
       ChatInput()
     }
@@ -67,19 +67,21 @@ public struct ChatFeature: ReducerProtocol {
       switch action {
       case .onAppear:
         return .merge(
-          .fireAndForget {
+          .run { _ in
             await userDefaultsClient.setChatReadTimeInterval(date().timeIntervalSince1970)
           },
-          EffectTask(value: .fetchChatMessages)
+          .send(.fetchChatMessages)
         )
         
       case .fetchChatMessages:
         state.chatMessages = .loading(state.chatMessages.elements ?? [])
-        return .task {
-          await .fetchChatMessagesResponse(
-            TaskResult {
-              try await apiService.getChatMessages()
-            }
+        return .run { send in
+          await send(
+            .fetchChatMessagesResponse(
+              TaskResult {
+                try await apiService.getChatMessages()
+              }
+            )
           )
         }
         
@@ -105,7 +107,7 @@ public struct ChatFeature: ReducerProtocol {
       case .chatInputResponse(.success):
         state.chatInputState.isSending = false
         state.chatInputState.message.removeAll()
-        return EffectTask(value: .fetchChatMessages)
+        return .send(.fetchChatMessages)
         
       case let .chatInputResponse(.failure(error)):
         state.chatInputState.isSending = false
@@ -129,11 +131,13 @@ public struct ChatFeature: ReducerProtocol {
           
           state.chatInputState.isSending = true
           
-          return .task {
-            await .chatInputResponse(
-              TaskResult {
-                try await apiService.postChatMessage(message)
-              }
+          return .run { send in
+            await send(
+              .chatInputResponse(
+                TaskResult {
+                  try await apiService.postChatMessage(message)
+                }
+              )
             )
           }
           

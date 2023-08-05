@@ -15,19 +15,22 @@ struct CriticalMapsApp: App {
     WindowGroup {
       AppView(store: self.appDelegate.store)
     }
-    .onChange(of: scenePhase) { _ in }
+    .onChange(of: scenePhase) { _ in
+//      self.appDelegate.viewStore.send(.)
+    }
   }
 }
 
 // MARK: AppDelegate
 
 final class AppDelegate: NSObject, UIApplicationDelegate {
-  let store = Store(
-    initialState: .init(),
-    reducer: AppFeature()
-  )
-  lazy var viewStore = ViewStore(
-    self.store.scope(state: { _ in () }, action: { $0 }),
+  let store = Store(initialState: .init()) {
+    AppFeature()
+  }
+  
+  lazy var viewStore: ViewStore<Void, AppFeature.Action> = ViewStore(
+    self.store,
+    observe: { _ in },
     removeDuplicates: ==
   )
 
