@@ -14,7 +14,8 @@ platform :ios do
       project: "CriticalMaps.xcodeproj",
       scheme: Scheme,
       device: 'iPhone 12',
-      result_bundle: true
+      result_bundle: true,
+      xcargs: '-skipPackagePluginValidation -skipMacroValidation'
     )
     trainer(path: "./fastlane/test_output", output_directory: "./fastlane")
   end
